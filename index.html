@@ -241,13 +241,20 @@
       white-space: pre-wrap;
     }
 
+    .entry-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex-shrink: 0;
+      margin: -8px -8px -8px 0;
+    }
+
+    .btn-edit,
     .btn-delete {
       background: none;
       border: none;
       cursor: pointer;
-      color: #d9b0b0;
       font-size: 1rem;
-      /* 44px 터치 타겟 확보 */
       min-width: 44px;
       min-height: 44px;
       display: flex;
@@ -255,12 +262,102 @@
       justify-content: center;
       border-radius: 10px;
       transition: color 0.15s, background 0.15s;
-      flex-shrink: 0;
       touch-action: manipulation;
-      margin: -8px -8px -8px 0;
     }
 
+    .btn-edit { color: #c8a87a; }
+    .btn-delete { color: #d9b0b0; }
+
+    .btn-edit:active   { color: #d48c30; background: #fff8ee; }
     .btn-delete:active { color: #e05070; background: #fff0f2; }
+
+    /* 편집 모달 (바텀 시트) */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fade-in 0.2s ease;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .modal-sheet {
+      background: #fff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 24px 24px 0 0;
+      padding: 12px 20px 20px;
+      padding-bottom: max(20px, env(safe-area-inset-bottom) + 16px);
+      animation: slide-up 0.28s cubic-bezier(0.32,0.72,0,1);
+    }
+
+    @keyframes slide-up {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+
+    .modal-handle {
+      width: 40px;
+      height: 4px;
+      background: #e8ddd8;
+      border-radius: 2px;
+      margin: 0 auto 18px;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #6b4a4a;
+      margin-bottom: 16px;
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 14px;
+      background: #f5eeec;
+      color: #8c6060;
+      border: none;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 52px;
+      touch-action: manipulation;
+    }
+
+    .btn-save {
+      flex: 2;
+      padding: 14px;
+      background: linear-gradient(135deg, #f4845f, #e85d8a);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 52px;
+      touch-action: manipulation;
+    }
+
+    .btn-cancel:active { opacity: 0.8; }
+    .btn-save:active   { opacity: 0.88; transform: scale(0.98); }
 
     .empty {
       text-align: center;
@@ -299,8 +396,10 @@
     /* 태블릿 이상 hover 스타일 */
     @media (hover: hover) {
       .jar-container:hover .jar-svg { transform: scale(1.03); }
-      .btn-add:hover { opacity: 0.92; }
+      .btn-add:hover  { opacity: 0.92; }
+      .btn-edit:hover   { color: #d48c30; background: #fff8ee; }
       .btn-delete:hover { color: #e05070; background: #fff0f2; }
+      .btn-save:hover   { opacity: 0.92; }
     }
   </style>
 </head>
@@ -364,6 +463,26 @@
 <div class="entries" id="entriesList"></div>
 
 <div class="toast" id="toast"></div>
+
+<!-- 편집 모달 -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">행복 수정하기</div>
+    <div class="field">
+      <label for="editDateInput">날짜</label>
+      <input type="date" id="editDateInput" />
+    </div>
+    <div class="field">
+      <label for="editTextInput">내용</label>
+      <textarea id="editTextInput" inputmode="text"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeEdit()">취소</button>
+      <button class="btn-save" onclick="saveEdit()">저장하기</button>
+    </div>
+  </div>
+</div>
 
 <script>
   const EMOJIS = ['✨','💛','🌸','🌟','🍀','🌈','🎉','💖','🌻','🍋','☀️','🦋','🌺','🎈','🍓'];
@@ -448,7 +567,10 @@
           <div class="entry-date">${formatDate(e.date)}</div>
           <div class="entry-text">${escHtml(e.text)}</div>
         </div>
-        <button class="btn-delete" onclick="deleteEntry(${e.id})" aria-label="삭제">✕</button>
+        <div class="entry-actions">
+          <button class="btn-edit"   onclick="openEdit(${e.id})" aria-label="편집">✎</button>
+          <button class="btn-delete" onclick="deleteEntry(${e.id})" aria-label="삭제">✕</button>
+        </div>
       </div>
     `).join('');
   }
@@ -470,6 +592,49 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
   }
+
+  // 편집 모달
+  let editingId = null;
+
+  function openEdit(id) {
+    const entry = entries.find(e => e.id === id);
+    if (!entry) return;
+    editingId = id;
+    document.getElementById('editDateInput').value = entry.date;
+    document.getElementById('editTextInput').value = entry.text;
+    document.getElementById('modalBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('editTextInput').focus(), 300);
+  }
+
+  function closeEdit() {
+    editingId = null;
+    document.getElementById('modalBackdrop').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function saveEdit() {
+    const date = document.getElementById('editDateInput').value;
+    const text = document.getElementById('editTextInput').value.trim();
+    if (!text) { showToast('내용을 입력해주세요 😊'); return; }
+    const entry = entries.find(e => e.id === editingId);
+    if (!entry) return;
+    entry.date = date || entry.date;
+    entry.text = text;
+    save();
+    renderAll();
+    closeEdit();
+    showToast('수정했어요 ✨');
+  }
+
+  function handleBackdropClick(e) {
+    if (e.target === document.getElementById('modalBackdrop')) closeEdit();
+  }
+
+  // 모달 내 Cmd+Enter 저장
+  document.getElementById('editTextInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) saveEdit();
+  });
 
   // 엔터키로 저장
   document.getElementById('textInput').addEventListener('keydown', e => {
