@@ -2,24 +2,32 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#fef9f0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="행복 저금통" />
   <title>행복 저금통</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: -apple-system, 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
       background: linear-gradient(135deg, #fef9f0 0%, #fff0f5 100%);
-      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 16px;
+      padding: 48px 16px 40px;
+      padding-top: max(48px, env(safe-area-inset-top) + 20px);
+      padding-bottom: max(40px, env(safe-area-inset-bottom) + 20px);
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
       color: #3a2e2e;
     }
 
     h1 {
-      font-size: 2rem;
+      font-size: clamp(1.6rem, 6vw, 2rem);
       font-weight: 700;
       margin-bottom: 4px;
       letter-spacing: -0.5px;
@@ -28,16 +36,18 @@
     .subtitle {
       font-size: 0.95rem;
       color: #a07070;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
+    /* Jar */
     .jar-container {
       position: relative;
-      width: 220px;
-      height: 260px;
-      margin-bottom: 32px;
+      width: min(200px, 55vw);
+      height: min(240px, 65vw);
+      margin-bottom: 28px;
       cursor: pointer;
       user-select: none;
+      touch-action: manipulation;
     }
 
     .jar-svg {
@@ -47,14 +57,14 @@
       transition: transform 0.15s ease;
     }
 
-    .jar-container:hover .jar-svg { transform: scale(1.03); }
+    .jar-container:active .jar-svg { transform: scale(0.96); }
 
     .jar-count {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -40%);
-      font-size: 2.8rem;
+      font-size: clamp(2rem, 8vw, 2.8rem);
       font-weight: 800;
       color: #c0734a;
       text-shadow: 0 2px 4px rgba(255,255,255,0.8);
@@ -63,25 +73,26 @@
 
     .jar-label {
       position: absolute;
-      bottom: 52px;
+      bottom: calc(52px * min(200px, 55vw) / 200px);
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: #c0734a;
       font-weight: 600;
       letter-spacing: 0.5px;
       pointer-events: none;
+      white-space: nowrap;
     }
 
     /* Form */
     .form-card {
       background: #fff;
       border-radius: 20px;
-      padding: 24px;
+      padding: 20px;
       width: 100%;
       max-width: 480px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
 
     .form-card h2 {
@@ -95,7 +106,7 @@
 
     label {
       display: block;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: #8c6060;
       margin-bottom: 6px;
@@ -106,26 +117,29 @@
       width: 100%;
       border: 1.5px solid #f0ddd8;
       border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 0.95rem;
+      padding: 12px 14px;
+      /* 16px 이상이어야 iOS에서 자동 확대 방지 */
+      font-size: 16px;
       font-family: inherit;
       color: #3a2e2e;
       background: #fffaf8;
       outline: none;
       transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
     input[type="date"]:focus,
     textarea:focus { border-color: #e8a090; }
 
     textarea {
-      resize: vertical;
-      min-height: 80px;
+      resize: none;
+      min-height: 90px;
     }
 
     .btn-add {
       width: 100%;
-      padding: 12px;
+      padding: 15px;
       background: linear-gradient(135deg, #f4845f, #e85d8a);
       color: #fff;
       border: none;
@@ -134,11 +148,13 @@
       font-weight: 700;
       cursor: pointer;
       letter-spacing: 0.3px;
+      touch-action: manipulation;
       transition: opacity 0.15s, transform 0.1s;
+      /* 최소 44px 터치 타겟 */
+      min-height: 52px;
     }
 
-    .btn-add:hover { opacity: 0.92; }
-    .btn-add:active { transform: scale(0.98); }
+    .btn-add:active { transform: scale(0.98); opacity: 0.9; }
 
     /* List */
     .list-header {
@@ -148,24 +164,31 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
+      gap: 12px;
     }
 
     .list-header h2 {
       font-size: 1rem;
       font-weight: 700;
       color: #6b4a4a;
+      white-space: nowrap;
     }
 
     .filter-input {
       border: 1.5px solid #f0ddd8;
       border-radius: 10px;
-      padding: 6px 12px;
-      font-size: 0.82rem;
+      padding: 8px 12px;
+      font-size: 16px;
       font-family: inherit;
       color: #3a2e2e;
       background: #fffaf8;
       outline: none;
-      width: 140px;
+      width: 0;
+      flex: 1;
+      min-width: 0;
+      max-width: 160px;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
     .filter-input:focus { border-color: #e8a090; }
@@ -176,18 +199,18 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      padding-bottom: 16px;
     }
 
     .entry-card {
       background: #fff;
       border-radius: 16px;
-      padding: 16px 18px;
+      padding: 16px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.06);
       display: flex;
-      gap: 14px;
+      gap: 12px;
       align-items: flex-start;
       animation: pop-in 0.25s ease;
-      position: relative;
     }
 
     @keyframes pop-in {
@@ -196,9 +219,9 @@
     }
 
     .entry-emoji {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       flex-shrink: 0;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
     .entry-body { flex: 1; min-width: 0; }
@@ -223,15 +246,21 @@
       border: none;
       cursor: pointer;
       color: #d9b0b0;
-      font-size: 1.1rem;
-      padding: 4px;
-      border-radius: 8px;
+      font-size: 1rem;
+      /* 44px 터치 타겟 확보 */
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
       transition: color 0.15s, background 0.15s;
       flex-shrink: 0;
-      line-height: 1;
+      touch-action: manipulation;
+      margin: -8px -8px -8px 0;
     }
 
-    .btn-delete:hover { color: #e05070; background: #fff0f2; }
+    .btn-delete:active { color: #e05070; background: #fff0f2; }
 
     .empty {
       text-align: center;
@@ -240,15 +269,15 @@
       padding: 24px 0;
     }
 
-    /* Toast */
+    /* Toast — 하단 safe area 위에 표시 */
     .toast {
       position: fixed;
-      bottom: 28px;
+      bottom: max(28px, env(safe-area-inset-bottom) + 16px);
       left: 50%;
       transform: translateX(-50%) translateY(80px);
       background: #3a2e2e;
       color: #fff;
-      padding: 10px 22px;
+      padding: 12px 24px;
       border-radius: 40px;
       font-size: 0.88rem;
       font-weight: 600;
@@ -256,11 +285,22 @@
       transition: transform 0.3s ease, opacity 0.3s ease;
       pointer-events: none;
       z-index: 100;
+      white-space: nowrap;
+      max-width: calc(100vw - 48px);
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .toast.show {
       transform: translateX(-50%) translateY(0);
       opacity: 1;
+    }
+
+    /* 태블릿 이상 hover 스타일 */
+    @media (hover: hover) {
+      .jar-container:hover .jar-svg { transform: scale(1.03); }
+      .btn-add:hover { opacity: 0.92; }
+      .btn-delete:hover { color: #e05070; background: #fff0f2; }
     }
   </style>
 </head>
@@ -272,29 +312,21 @@
 <!-- Jar visualization -->
 <div class="jar-container" title="저금통을 클릭하면 랜덤 추억을 보여줍니다" onclick="showRandom()">
   <svg class="jar-svg" viewBox="0 0 220 260" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- lid -->
     <rect x="60" y="14" width="100" height="22" rx="8" fill="#f4c97a"/>
     <rect x="68" y="8" width="84" height="18" rx="7" fill="#f7d98a"/>
-    <!-- jar body -->
     <path d="M42 48 Q36 80 36 140 Q36 210 50 230 Q70 248 110 248 Q150 248 170 230 Q184 210 184 140 Q184 80 178 48 Z" fill="#fff9ed"/>
     <path d="M42 48 Q36 80 36 140 Q36 210 50 230 Q70 248 110 248 Q150 248 170 230 Q184 210 184 140 Q184 80 178 48 Z" fill="url(#jarGrad)" opacity="0.5"/>
-    <!-- jar neck -->
     <path d="M65 36 Q58 44 42 48 L178 48 Q162 44 155 36 Z" fill="#fde9b0"/>
-    <!-- shine -->
     <ellipse cx="72" cy="120" rx="10" ry="36" fill="white" opacity="0.25" transform="rotate(-10 72 120)"/>
-    <!-- fill level (dynamic via JS) -->
     <clipPath id="fillClip">
       <path d="M42 48 Q36 80 36 140 Q36 210 50 230 Q70 248 110 248 Q150 248 170 230 Q184 210 184 140 Q184 80 178 48 Z"/>
     </clipPath>
     <rect id="fillRect" x="36" y="248" width="148" height="0" fill="url(#fillGrad)" clip-path="url(#fillClip)"/>
-    <!-- stars/hearts decoration -->
     <text x="92" y="185" font-size="18" opacity="0.18">✨</text>
     <text x="124" y="205" font-size="14" opacity="0.15">💛</text>
     <text x="76" y="210" font-size="12" opacity="0.15">⭐</text>
-    <!-- outline -->
     <path d="M42 48 Q36 80 36 140 Q36 210 50 230 Q70 248 110 248 Q150 248 170 230 Q184 210 184 140 Q184 80 178 48 Z" stroke="#e8c48a" stroke-width="2.5" fill="none"/>
     <rect x="60" y="14" width="100" height="22" rx="8" stroke="#e8b860" stroke-width="2" fill="none"/>
-
     <defs>
       <linearGradient id="jarGrad" x1="36" y1="48" x2="184" y2="48" gradientUnits="userSpaceOnUse">
         <stop offset="0%" stop-color="#f4c97a" stop-opacity="0.3"/>
@@ -319,7 +351,7 @@
   </div>
   <div class="field">
     <label for="textInput">어떤 행복이었나요?</label>
-    <textarea id="textInput" placeholder="오늘 기억하고 싶은 순간을 적어보세요..."></textarea>
+    <textarea id="textInput" placeholder="오늘 기억하고 싶은 순간을 적어보세요..." inputmode="text"></textarea>
   </div>
   <button class="btn-add" onclick="addEntry()">저금통에 넣기 ✨</button>
 </div>
@@ -327,7 +359,7 @@
 <!-- Entry list -->
 <div class="list-header">
   <h2>모든 행복 기록</h2>
-  <input class="filter-input" id="filterInput" type="text" placeholder="검색..." oninput="renderEntries()" />
+  <input class="filter-input" id="filterInput" type="search" placeholder="검색..." oninput="renderEntries()" />
 </div>
 <div class="entries" id="entriesList"></div>
 
@@ -349,7 +381,8 @@
   }
 
   function today() {
-    return new Date().toISOString().slice(0, 10);
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
 
   function formatDate(d) {
@@ -369,7 +402,7 @@
     entries.unshift({ id: Date.now(), date, text, emoji: randomEmoji() });
     save();
     document.getElementById('textInput').value = '';
-    document.getElementById('dateInput').value = '';
+    document.getElementById('dateInput').value = today();
     renderAll();
     showToast('행복을 저금했어요 🎉');
   }
@@ -384,15 +417,13 @@
   function showRandom() {
     if (!entries.length) { showToast('아직 기록이 없어요 😊'); return; }
     const e = entries[Math.floor(Math.random() * entries.length)];
-    showToast(`${e.emoji} ${formatDate(e.date)} — ${e.text.slice(0, 40)}${e.text.length > 40 ? '...' : ''}`);
+    showToast(`${e.emoji} ${formatDate(e.date)} — ${e.text.slice(0, 36)}${e.text.length > 36 ? '...' : ''}`);
   }
 
   function renderJar() {
     const count = entries.length;
     document.getElementById('jarCount').textContent = count;
-
-    const maxFill = 180; // px height max
-    const fillH = Math.min(maxFill, count * 12);
+    const fillH = Math.min(180, count * 12);
     const fillRect = document.getElementById('fillRect');
     fillRect.setAttribute('y', String(248 - fillH));
     fillRect.setAttribute('height', String(fillH));
@@ -406,7 +437,7 @@
     const list = document.getElementById('entriesList');
 
     if (!filtered.length) {
-      list.innerHTML = `<p class="empty">${entries.length ? '검색 결과가 없어요' : '아직 기록이 없어요. 첫 행복을 저금해보세요!'}</p>`;
+      list.innerHTML = `<p class="empty">${entries.length ? '검색 결과가 없어요' : '아직 기록이 없어요.\n첫 행복을 저금해보세요!'}</p>`;
       return;
     }
 
@@ -417,7 +448,7 @@
           <div class="entry-date">${formatDate(e.date)}</div>
           <div class="entry-text">${escHtml(e.text)}</div>
         </div>
-        <button class="btn-delete" onclick="deleteEntry(${e.id})" title="삭제">✕</button>
+        <button class="btn-delete" onclick="deleteEntry(${e.id})" aria-label="삭제">✕</button>
       </div>
     `).join('');
   }
@@ -440,7 +471,11 @@
     toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
   }
 
-  // Init
+  // 엔터키로 저장
+  document.getElementById('textInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) addEntry();
+  });
+
   document.getElementById('dateInput').value = today();
   load();
   renderAll();
