@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef3e2"/>
+      <stop offset="100%" stop-color="#fce4f0"/>
+    </linearGradient>
+    <linearGradient id="jarBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff8ec"/>
+      <stop offset="100%" stop-color="#fdebd0"/>
+    </linearGradient>
+    <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fcd97a" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#f4845f" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="lid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7dd8a"/>
+      <stop offset="100%" stop-color="#f0c050"/>
+    </linearGradient>
+    <clipPath id="jarClip">
+      <path d="M138 164 Q124 228 124 316 Q124 396 152 422 Q188 446 256 446 Q324 446 360 422 Q388 396 388 316 Q388 228 374 164 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- BG -->
+  <rect width="512" height="512" rx="120" fill="url(#bg)"/>
+
+  <!-- Jar body -->
+  <path d="M138 164 Q124 228 124 316 Q124 396 152 422 Q188 446 256 446 Q324 446 360 422 Q388 396 388 316 Q388 228 374 164 Z" fill="url(#jarBody)"/>
+
+  <!-- Fill level -->
+  <rect x="124" y="280" width="264" height="166" fill="url(#fill)" clip-path="url(#jarClip)" rx="0"/>
+
+  <!-- Jar neck -->
+  <path d="M176 116 Q158 140 138 164 L374 164 Q354 140 336 116 Z" fill="#fde9b0"/>
+
+  <!-- Lid base -->
+  <rect x="154" y="90" width="204" height="44" rx="18" fill="url(#lid)"/>
+  <!-- Lid top -->
+  <rect x="170" y="70" width="172" height="34" rx="14" fill="#f7e098"/>
+  <!-- Lid highlight -->
+  <rect x="182" y="76" width="80" height="10" rx="5" fill="white" opacity="0.45"/>
+
+  <!-- Jar shine -->
+  <ellipse cx="188" cy="270" rx="18" ry="60" fill="white" opacity="0.22" transform="rotate(-12 188 270)"/>
+
+  <!-- Heart inside jar -->
+  <path d="M256 358 C256 358 210 328 210 300 C210 284 222 274 238 278 C246 280 252 286 256 292 C260 286 266 280 274 278 C290 274 302 284 302 300 C302 328 256 358 256 358Z" fill="white" opacity="0.85"/>
+
+  <!-- Sparkles -->
+  <circle cx="310" cy="220" r="7" fill="#f9c46a" opacity="0.9"/>
+  <circle cx="330" cy="248" r="4" fill="#f4845f" opacity="0.8"/>
+  <circle cx="296" cy="244" r="3" fill="#fcd97a" opacity="0.9"/>
+
+  <circle cx="180" cy="230" r="5" fill="#f9c46a" opacity="0.8"/>
+  <circle cx="162" cy="256" r="3" fill="#f4845f" opacity="0.7"/>
+  <circle cx="194" cy="255" r="4" fill="#fcd97a" opacity="0.85"/>
+
+  <!-- Star sparkle top right -->
+  <g transform="translate(348, 108)" opacity="0.9">
+    <line x1="0" y1="-12" x2="0" y2="12" stroke="#f9c46a" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="-12" y1="0" x2="12" y2="0" stroke="#f9c46a" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="-8" y1="-8" x2="8" y2="8" stroke="#f9c46a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="8" y1="-8" x2="-8" y2="8" stroke="#f9c46a" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Star sparkle top left -->
+  <g transform="translate(152, 82)" opacity="0.75">
+    <line x1="0" y1="-8" x2="0" y2="8" stroke="#e85d8a" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="-8" y1="0" x2="8" y2="0" stroke="#e85d8a" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="-5" y1="-5" x2="5" y2="5" stroke="#e85d8a" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="5" y1="-5" x2="-5" y2="5" stroke="#e85d8a" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Jar outline -->
+  <path d="M138 164 Q124 228 124 316 Q124 396 152 422 Q188 446 256 446 Q324 446 360 422 Q388 396 388 316 Q388 228 374 164 Z" stroke="#e8c48a" stroke-width="5" fill="none" stroke-linejoin="round"/>
+  <rect x="154" y="90" width="204" height="44" rx="18" stroke="#e8b860" stroke-width="4" fill="none"/>
+  <path d="M176 116 Q158 140 138 164 L374 164 Q354 140 336 116 Z" stroke="#e8c48a" stroke-width="3" fill="none" stroke-linejoin="round"/>
+</svg>

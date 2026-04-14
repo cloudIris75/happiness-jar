@@ -7,6 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="행복 저금통" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="apple-touch-icon" href="logo.svg" />
   <title>행복 저금통</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -31,6 +33,13 @@
       font-weight: 700;
       margin-bottom: 4px;
       letter-spacing: -0.5px;
+    }
+
+    .site-logo {
+      width: 88px;
+      height: 88px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 6px 16px rgba(244,132,95,0.25));
     }
 
     .subtitle {
@@ -405,7 +414,8 @@
 </head>
 <body>
 
-<h1>행복 저금통 🫙</h1>
+<img src="logo.svg" alt="행복 저금통 로고" class="site-logo" />
+<h1>행복 저금통</h1>
 <p class="subtitle">작은 행복을 차곡차곡 모아보세요</p>
 
 <!-- Jar visualization -->
